@@ -85,7 +85,7 @@ class CycleGan:
         self.train_loader, data_len = load.data_load(f'data/{params["dataset"]}/{params["train_folder"]}/{params["A"]}',
                 f'data/{params["dataset"]}/{params["train_folder"]}/{params["B"]}',
                 transform, params["batch_size"], shuffle=True, cache=True,
-                cache_file=f'{params["dataset"]}_{params["content_cache_name"]}_cache.pickle',
+                cache_file=f'{params["dataset"]}_content_cache.pickle',
                 close=params["similar_distance"])
 
         self.set_lr_sched(params['train_epoch'], data_len / params['batch_size'], params['lr_cycle_mult'])
