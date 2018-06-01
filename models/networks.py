@@ -107,10 +107,10 @@ class Discriminator(nn.Module):
             next_level_filt = int(filts / 2)
             if a == layers - 1:
                 self.input = ConvTrans(ic=channels, oc=filts, kernel_size=kernel_size, store_relu=False,
-                                       block_type='down').cuda()
+                                       block_type='down')
             else:
                 operations += [ConvTrans(ic=next_level_filt, oc=filts, kernel_size=kernel_size, store_relu=True,
-                                         block_type='down').cuda()]
+                                         block_type='down')]
             filts = next_level_filt
 
         out_operations = [nn.Conv2d(in_channels=max_filt, out_channels=1, padding=0, kernel_size=kernel_size, stride=1)]

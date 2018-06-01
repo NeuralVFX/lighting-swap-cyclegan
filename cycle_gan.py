@@ -321,4 +321,4 @@ class CycleGan:
             per_epoch_ptime = epoch_end_time - epoch_start_time
             self.train_hist_dict['per_epoch_ptimes'].append(per_epoch_ptime)
             print(f'Epoch:{self.current_epoch}, Epoch Time:{per_epoch_ptime}')
-            [print(f'{loss}: {helpers.mft(self.loss_epoch_dict[loss])}') for loss in self.losses]
+            [print(f'{loss}: {helper.mft(self.loss_epoch_dict[loss])}') for loss in self.losses]
