@@ -1,4 +1,3 @@
-#MODELS#
 import random
 
 import torch
