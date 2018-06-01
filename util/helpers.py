@@ -8,7 +8,7 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
-import loaders as load
+from util import loaders as load
 
 
 def mft(tensor):
