@@ -5,7 +5,7 @@ import random
 import copy
 import pickle
 
-import tqdm as tqdm
+from tqdm import tqdm
 import torchvision.models as models
 from PIL import Image
 from torch.autograd import Variable
