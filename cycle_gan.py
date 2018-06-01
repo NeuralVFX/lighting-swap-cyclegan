@@ -13,6 +13,7 @@ from torchvision import transforms
 import torch.optim as optim
 from torch.autograd import Variable
 import torch
+import torch.nn as nn
 
 from util import helpers as helper
 from util import loaders as load
@@ -24,7 +25,7 @@ def weights_init_normal(m):
     if 'ConvTrans' == classname:
         pass
     elif 'Conv2d' in classname or 'Linear' in classname or 'ConvTrans' in classname:
-        init.normal(m.weight.data, 0, .02)
+        nn.init.normal(m.weight.data, 0, .02)
 
 
 def mean_std_loss(f_real, f_fake):
