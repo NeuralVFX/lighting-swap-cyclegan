@@ -3,7 +3,7 @@ import math
 import itertools
 import time
 
-import tqdm
+import tqdm as tqdm
 from torch.utils.data import *
 import matplotlib
 
