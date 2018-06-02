@@ -1,3 +1,4 @@
+# HELPER UTILITIES
 import random
 
 import torch
@@ -23,6 +24,8 @@ def normalize_img(x, cpu=False):
 
 
 def show_test(g, g_a, params, save=False):
+    # Use IDs provided by user to index into non-shufled data loader and chech the same images each time#
+
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=(.5, .5, .5), std=(.5, .5, .5))])
     ids_a = params['ids_a']
     ids_b = params['ids_b']
@@ -32,7 +35,7 @@ def show_test(g, g_a, params, save=False):
     test_loader_b = load.data_load_preview(f'data/{params["dataset"]}/{params["test_folder"]}/{params["B"]}', transform,
                                            1, shuffle=False)
 
-    """Visualize Test Translation"""
+    # show and save#
     g.eval()
     g_a.eval()
     image_grid_len = len(ids_a) + len(ids_b)
@@ -66,7 +69,7 @@ def show_test(g, g_a, params, save=False):
 
 
 class ImagePool:
-    """Quick Return of Images During Training"""
+    """Use old images during training: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/issues/75 """
 
     def __init__(self, pool_size):
         self.pool_size = pool_size

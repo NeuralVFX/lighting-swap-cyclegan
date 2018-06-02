@@ -1,3 +1,4 @@
+#LOADERS FOR TRAINING AND TESTING#
 import numpy as np
 import glob
 import os
@@ -17,6 +18,7 @@ from torch.utils.data import *
 
 
 def create_content_model():
+    # Create Resnet and chop it to use for content similarity measurment #
     model = models.resnet34(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False
@@ -31,6 +33,7 @@ def create_content_model():
 
 
 def make_content_dict(path_list):
+    # loop through all images provided and fetch content vector #
     scaler = transforms.Resize((224, 224))
     crop = transforms.CenterCrop(270)
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -51,6 +54,7 @@ def make_content_dict(path_list):
 
 
 class ContentSimilarLoader(Dataset):
+    # Loader for training, serves images from each dataset which appear similar, creates cache of most similar images #
     def __init__(self, path_a, path_b, transform, cache=False, cache_file=False, close=30):
         self.transform = transform
         self.close = close
@@ -97,7 +101,7 @@ class ContentSimilarLoader(Dataset):
         print('Initialized')
 
     def transform_set(self, image_a, image_b):
-
+        # adding some slight randomization to the images, yet matching between pairs #
         mult = (random.random() * 1.5 + 1)
 
         data_transforms = transforms.Compose([
@@ -113,7 +117,6 @@ class ContentSimilarLoader(Dataset):
         return image_a, image_b
 
     def __getitem__(self, index):
-
         # because each list omits certain samples from the other side, we use both lists put together #
         if index > len(self.path_list_a) - 1:
             index -= len(self.path_list_a)
@@ -140,6 +143,7 @@ class ContentSimilarLoader(Dataset):
 
 
 class NormalLoader(Dataset):
+    # This loaded is used at test time #
     def __init__(self, path_a, transform):
         self.transform = transform
         self.path_list_a = sorted(glob.glob(f'{path_a}/*.*'))
@@ -165,13 +169,13 @@ class NormalLoader(Dataset):
 
 
 def data_load(path_a, path_b, transform, batch_size, shuffle=False, cache=False, cache_file=False, close=30):
-    """Create Torchvision Dataloader"""
+    # Wrapper for content similar loader #
     dataset = ContentSimilarLoader(path_a, path_b, transform, cache=cache, cache_file=cache_file, close=close)
     datalen = dataset.__len__()
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8, shuffle=shuffle), datalen
 
 
 def data_load_preview(path_a, transform, batch_size, shuffle=False):
-    """Create Torchvision Dataloader"""
+    # Wrapper for nornal loader #
     dataset = NormalLoader(path_a, transform)
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8, shuffle=shuffle)

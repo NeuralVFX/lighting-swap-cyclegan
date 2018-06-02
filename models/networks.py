@@ -1,4 +1,4 @@
-# MODELS #
+# NETWORK BUILING BLOCKS #
 import torch.nn as nn
 
 

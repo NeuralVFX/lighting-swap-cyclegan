@@ -1,4 +1,4 @@
-# UTILITIES#
+# TRAINING CLASS #
 import math
 import itertools
 import time
@@ -29,6 +29,7 @@ def weights_init_normal(m):
 
 
 def mean_std_loss(f_real, f_fake):
+    # loop through features collected from real and fake discriminators, measure difference in std and mean #
     std_losses = 0
     mean_losses = 0
     for real_feat, fake_feat in zip(f_real, f_fake):
@@ -67,7 +68,7 @@ class CycleGan:
               'disc_layers': 3,
               'ids_a': [20, 60],
               'ids_b': [20, 70],
-              'save_root': 'ContentCyclePatchAug_mai_lr4_wr_cyc_10_small_dist_std_loss_no_lr_change'}
+              'save_root': 'wat_mai}
     lgtSwap = CycleGan(params)
     lgtSwap.train()
     """
@@ -171,7 +172,7 @@ class CycleGan:
         return lr_mult, save
 
     def set_lr_sched(self, epochs, iters, mult):
-        # hacky implimentation of warm restarts, will replace with pytorch version #
+        # hacky implimentation of warm restarts, will replace with pytorch version when its commmited #
         mult_iter = iters
         iter_stack = []
         save_index = []
@@ -252,7 +253,6 @@ class CycleGan:
                 d_b_result, d_b_fake_feats = self.model_dict["D_B"](fake_a)
                 self.loss_batch_dict['G_B_loss'] = self.BCE_loss(d_b_result,
                                                                  Variable(torch.ones(d_b_result.size()).cuda()))
-
                 # reconstruct #
                 rec_b = self.model_dict["G_A"](fake_a)
                 self.loss_batch_dict['Cycle_B_loss'] = self.L1_loss(rec_b, real_b) * params['cycle_loss_B']
@@ -260,13 +260,14 @@ class CycleGan:
                 self.opt_dict["D_A"].zero_grad()
                 self.opt_dict["D_B"].zero_grad()
 
-                # calculate feature loss #
+                # discriminate real samples #
                 d_a_real, d_a_real_feats = self.model_dict["D_A"](real_b)
                 d_b_real, d_b_real_feats = self.model_dict["D_B"](real_a)
 
                 d_a_mean_loss, d_a_std_loss = mean_std_loss(d_a_real_feats, d_a_fake_feats)
                 d_b_mean_loss, d_b_std_loss = mean_std_loss(d_b_real_feats, d_b_fake_feats)
 
+                # calculate feature loss #
                 self.loss_batch_dict['D_A_feat_loss'] = d_a_std_loss + d_a_mean_loss
                 self.loss_batch_dict['D_B_feat_loss'] = d_b_std_loss + d_b_mean_loss
 
