@@ -66,6 +66,7 @@ def show_test(g, g_a, params, save=False):
     if save:
         plt.savefig(save)
     plt.show()
+    plt.close(fig)
 
 
 class ImagePool:

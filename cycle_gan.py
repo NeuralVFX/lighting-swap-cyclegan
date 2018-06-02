@@ -184,26 +184,27 @@ class CycleGan:
         self.iter_stack = iter_stack
         self.save_index = save_index
 
+        fig = plt.figure()
         plt.plot(self.iter_stack)
         plt.savefig(f'{self.params["save_root"]}_learning_rate_schedule.jpg')
-
         plt.ylabel('Learning Rate Schedule')
-
         plt.show()
+        plt.close(fig)
 
     def display_history(self):
-
+        fig = plt.figure()
         for key in self.train_hist_dict.keys():
             x = range(len(self.train_hist_dict[key]))
             if len(x) > 0:
                 plt.plot(x, self.train_hist_dict[key], label=key)
-                plt.xlabel('Iteration')
-                plt.ylabel('Loss')
-                plt.legend(loc=2)
-                plt.grid(True)
-                plt.tight_layout()
-                plt.savefig(f'{self.params["save_root"]}_loss.jpg')
-                plt.show()
+        plt.xlabel('Iteration')
+        plt.ylabel('Loss')
+        plt.legend(loc=2)
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(f'{self.params["save_root"]}_loss.jpg')
+        plt.show()
+        plt.close(fig)
 
     def train(self):
         params = self.params
