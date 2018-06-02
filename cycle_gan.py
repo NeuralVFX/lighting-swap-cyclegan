@@ -320,10 +320,10 @@ class CycleGan:
 
             helper.show_test(self.model_dict['G_A'], self.model_dict['G_B'], params,
                              save=f'output/{params["save_root"]}_{self.current_cycle}.jpg')
-
-            self.current_cycle += 1
-            epoch_end_time = time.time()
-            per_epoch_ptime = epoch_end_time - epoch_start_time
-            self.train_hist_dict['per_epoch_ptimes'].append(per_epoch_ptime)
-            print(f'Epoch:{self.current_epoch}, Epoch Time:{per_epoch_ptime}')
-            [print(f'{loss}: {helper.mft(self.loss_epoch_dict[loss])}') for loss in self.losses]
+            if not done:
+                self.current_cycle += 1
+                epoch_end_time = time.time()
+                per_epoch_ptime = epoch_end_time - epoch_start_time
+                self.train_hist_dict['per_epoch_ptimes'].append(per_epoch_ptime)
+                print(f'Epoch:{self.current_epoch}, Epoch Time:{per_epoch_ptime}')
+                [print(f'{loss}: {helper.mft(self.loss_epoch_dict[loss])}') for loss in self.losses]
