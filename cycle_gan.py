@@ -92,7 +92,7 @@ class CycleGan:
                 close=params["similar_distance"], input_res=params["img_input_size"] ,
                 output_res=params["img_output_size"])
 
-        self.set_lr_sched(params['train_epoch'], data_len / params['batch_size'], params['lr_cycle_mult'])
+        self.set_lr_sched(params['train_epoch'], math.ceil(float(data_len) / float(params['batch_size'])), params['lr_cycle_mult'])
 
         self.model_dict["G_A"] = n.Generator(layers=params["gen_layers"], max_filt=params["gen_filters"],
                                              channels=params["in_channels"], res_layers=params["res_blocks"])
