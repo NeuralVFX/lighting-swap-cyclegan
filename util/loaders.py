@@ -155,6 +155,7 @@ class NormalLoader(Dataset):
 
     def transform_set(self, image_a):
         data_transforms = transforms.Compose([
+            # roughly matching crop of training loader for consistency #
             transforms.CenterCrop(self.input_res*.95),
             transforms.Resize(self.output_res)])
 
@@ -173,9 +174,11 @@ class NormalLoader(Dataset):
         return len(self.path_list_a)
 
 
-def data_load(path_a, path_b, transform, batch_size, shuffle=False, cache=False, cache_file=False, close=30, input_res=270, output_res=128):
+def data_load(path_a, path_b, transform, batch_size, shuffle=False, cache=False, cache_file=False, close=30,
+              input_res=270, output_res=128):
     # Wrapper for content similar loader #
-    dataset = ContentSimilarLoader(path_a, path_b, transform, cache=cache, cache_file=cache_file, close=close, input_res = input_res, output_res =output_res)
+    dataset = ContentSimilarLoader(path_a, path_b, transform, cache=cache, cache_file=cache_file, close=close,
+                                   input_res = input_res, output_res =output_res)
     datalen = dataset.__len__()
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8, shuffle=shuffle), datalen
 

@@ -12,12 +12,12 @@ from util import loaders as load
 
 
 def mft(tensor):
-    """return mean float tensor"""
+    # Return mean float tensor #
     return torch.mean(torch.FloatTensor(tensor))
 
 
 def normalize_img(x, cpu=False):
-    """Reverse Image Normalization"""
+    # Reverse Image Normalization #
     if cpu:
         x = x.cpu().data
     return (x.numpy().transpose(1, 2, 0) + 1) / 2
@@ -72,7 +72,7 @@ def show_test(g, g_a, params, save=False):
 
 
 class ImagePool:
-    """Use old images during training: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/issues/75 """
+    #Use old images during training: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/issues/75 #
 
     def __init__(self, pool_size):
         self.pool_size = pool_size

@@ -46,7 +46,6 @@ class CycleGan:
 
     params = {'dataset': 'wat_mai_amataros',
               'train_folder': 'train',
-              'content_cache_name': 'train',
               'A': 'morning',
               'B': 'cloudy',
               'test_folder': 'test',
@@ -66,6 +65,8 @@ class CycleGan:
               'beta2': .999,
               'gen_layers': 2,
               'disc_layers': 3,
+              'img_input_size':270,
+              'img_output_size':128,
               'ids_a': [20, 60],
               'ids_b': [20, 70],
               'save_root': 'wat_mai}
