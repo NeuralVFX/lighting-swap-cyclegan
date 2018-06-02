@@ -180,7 +180,7 @@ class CycleGan:
         for a in range(epochs):
             iter_stack += [math.cos((x / mult_iter) * 3.14) * .5 + .5 for x in (range(int(mult_iter)))]
             mult_iter *= mult
-            save_index.append(len(iter_stack) - 1)
+            save_index.append(len(iter_stack) )
 
         self.iter_stack = iter_stack
         self.save_index = save_index
