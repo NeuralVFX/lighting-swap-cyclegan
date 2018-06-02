@@ -88,7 +88,8 @@ class CycleGan:
                 f'data/{params["dataset"]}/{params["train_folder"]}/{params["B"]}',
                 transform, params["batch_size"], shuffle=True, cache=True,
                 cache_file=f'{params["dataset"]}_content_cache.pickle',
-                close=params["similar_distance"])
+                close=params["similar_distance"], input_res=params["img_input_size"] ,
+                output_res=params["img_output_size"])
 
         self.set_lr_sched(params['train_epoch'], data_len / params['batch_size'], params['lr_cycle_mult'])
 
@@ -111,7 +112,6 @@ class CycleGan:
         # setup losses #
         self.BCE_loss = nn.BCELoss()
         self.L1_loss = nn.L1Loss()
-        self.MSE_loss = nn.MSELoss()
 
         # setup optimizers #
         self.opt_dict["G"] = optim.Adam(
@@ -186,7 +186,7 @@ class CycleGan:
 
         fig = plt.figure()
         plt.plot(self.iter_stack)
-        plt.savefig(f'{self.params["save_root"]}_learning_rate_schedule.jpg')
+        plt.savefig(f'output/{self.params["save_root"]}_learning_rate_schedule.jpg')
         plt.ylabel('Learning Rate Schedule')
         plt.show()
         plt.close(fig)
@@ -202,7 +202,7 @@ class CycleGan:
         plt.legend(loc=2)
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(f'{self.params["save_root"]}_loss.jpg')
+        plt.savefig(f'output/{self.params["save_root"]}_loss.jpg')
         plt.show()
         plt.close(fig)
 
@@ -219,14 +219,14 @@ class CycleGan:
 
             [print(f"Learning Rate({opt}): {self.opt_dict[opt].param_groups[0]['lr']}") for opt in
              self.opt_dict.keys()]
-            print(f"Iter:{num_iter}, Sched Iter:{self.current_iter}, Sched Epoch:{self.current_epoch}")
+            print(f"Sched Cycle:{self.current_cycle}, Sched Iter:{self.current_iter}, Sched Epoch:{self.current_epoch}")
 
             for (real_a, real_b) in tqdm(self.train_loader):
 
                 if self.current_iter > len(self.iter_stack) - 1:
                     done = True
                     self.display_history()
-                    print('Hit End of Learning Schedule')
+                    print('Hit End of Learning Schedule!')
                     break
 
                 lr_mult, save = self.lr_lookup()
@@ -239,22 +239,22 @@ class CycleGan:
                 # traing generator#
                 self.opt_dict["G"].zero_grad()
 
-                # generate and discriminate#
+                # generate fake b and discriminate#
                 fake_b = self.model_dict["G_A"](real_a)
                 d_a_result, d_a_fake_feats = self.model_dict["D_A"](fake_b)
                 self.loss_batch_dict['G_A_loss'] = self.BCE_loss(d_a_result,
                                                                  Variable(torch.ones(d_a_result.size()).cuda()))
 
-                # reconstruct #
+                # reconstruct a #
                 rec_a = self.model_dict["G_B"](fake_b)
                 self.loss_batch_dict['Cycle_A_loss'] = self.L1_loss(rec_a, real_a) * params['cycle_loss_A']
 
-                # generate and discriminate#
+                # generate fake a and discriminate#
                 fake_a = self.model_dict["G_B"](real_b)
                 d_b_result, d_b_fake_feats = self.model_dict["D_B"](fake_a)
                 self.loss_batch_dict['G_B_loss'] = self.BCE_loss(d_b_result,
                                                                  Variable(torch.ones(d_b_result.size()).cuda()))
-                # reconstruct #
+                # reconstruct b #
                 rec_b = self.model_dict["G_A"](fake_a)
                 self.loss_batch_dict['Cycle_B_loss'] = self.L1_loss(rec_b, real_b) * params['cycle_loss_B']
 
@@ -272,7 +272,7 @@ class CycleGan:
                 self.loss_batch_dict['D_A_feat_loss'] = d_a_std_loss + d_a_mean_loss
                 self.loss_batch_dict['D_B_feat_loss'] = d_b_std_loss + d_b_mean_loss
 
-                # Addup loss and step ##
+                # addup generator a and b loss and step ##
                 g_a_loss_total = self.loss_batch_dict['G_A_loss'] * .5 + self.loss_batch_dict['D_B_feat_loss'] * .5
                 g_b_loss_total = self.loss_batch_dict['G_B_loss'] * .5 + self.loss_batch_dict['D_A_feat_loss'] * .5
 
@@ -281,25 +281,26 @@ class CycleGan:
                 g_loss.backward(retain_graph=True)
                 self.opt_dict["G"].step()
 
-                # train discriminator A #
+                # train discriminator a #
                 d_a_real_loss = self.BCE_loss(d_a_real, Variable(torch.ones(d_a_real.size()).cuda()))
 
                 fake_b = self.fakeB_pool.query(fake_b)
                 d_a_fake, d_a_fake_feats = self.model_dict["D_A"](fake_b)
                 d_a_fake_loss = self.BCE_loss(d_a_fake, Variable(torch.zeros(d_a_fake.size()).cuda()))
 
+                # add up disc a loss and step #
                 self.loss_batch_dict['D_A_loss'] = (d_a_real_loss + d_a_fake_loss) * .5
                 self.loss_batch_dict['D_A_loss'].backward()
                 self.opt_dict["D_A"].step()
 
-                # train discriminator B #
+                # train discriminator b #
                 d_b_real_loss = self.BCE_loss(d_b_real, Variable(torch.ones(d_b_real.size()).cuda()))
 
                 fake_a = self.fakeA_pool.query(fake_a)
                 d_b_fake, d_b_fake_feats = self.model_dict["D_B"](fake_a)
                 d_b_fake_loss = self.BCE_loss(d_b_fake, Variable(torch.zeros(d_b_fake.size()).cuda()))
 
-                # add up loss and step #
+                # add up disc b  loss and step #
                 self.loss_batch_dict['D_B_loss'] = (d_b_real_loss + d_b_fake_loss) * .5
                 self.loss_batch_dict['D_B_loss'].backward()
                 self.opt_dict["D_B"].step()
@@ -309,14 +310,14 @@ class CycleGan:
                 [self.loss_epoch_dict[loss].append(self.loss_batch_dict[loss].data[0]) for loss in self.losses]
 
                 if save:
-                    self.save_state(f'{params["save_root"]}_{self.current_epoch}.json')
+                    self.save_state(f'output/{params["save_root"]}_{self.current_epoch}.json')
                     self.current_epoch += 1
 
                 self.current_iter += 1
                 num_iter += 1
 
             helper.show_test(self.model_dict['G_A'], self.model_dict['G_B'], params,
-                             save=f'{params["save_root"]}_{self.current_cycle}.jpg')
+                             save=f'output/{params["save_root"]}_{self.current_cycle}.jpg')
 
             self.current_cycle += 1
             epoch_end_time = time.time()

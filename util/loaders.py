@@ -32,10 +32,10 @@ def create_content_model():
     return extractor
 
 
-def make_content_dict(path_list):
+def make_content_dict(path_list,input_res = 270):
     # loop through all images provided and fetch content vector #
     scaler = transforms.Resize((224, 224))
-    crop = transforms.CenterCrop(270)
+    crop = transforms.CenterCrop(input_res)
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
     to_tensor = transforms.ToTensor()
@@ -55,7 +55,9 @@ def make_content_dict(path_list):
 
 class ContentSimilarLoader(Dataset):
     # Loader for training, serves images from each dataset which appear similar, creates cache of most similar images #
-    def __init__(self, path_a, path_b, transform, cache=False, cache_file=False, close=30):
+    def __init__(self, path_a, path_b, transform, cache=False, cache_file=False, close=30, input_res=270, output_res=128):
+        self.input_res = input_res
+        self.output_res = output_res
         self.transform = transform
         self.close = close
         print(f'Similarity Distance:{self.close}')
@@ -106,8 +108,9 @@ class ContentSimilarLoader(Dataset):
 
         data_transforms = transforms.Compose([
             transforms.RandomRotation(6 * mult, resample=Image.BICUBIC),
-            transforms.CenterCrop(270 - (20 * mult)),
-            transforms.RandomResizedCrop(128, scale=(.9, 1), ratio=(1, 1), interpolation=2)])
+            # center crop by an amount that never shows black edges on rotate image #
+            transforms.CenterCrop(self.input_res - ((.074*self.input_res) * mult)),
+            transforms.RandomResizedCrop(self.output_res, scale=(.9, 1), ratio=(1, 1), interpolation=2)])
 
         seed = random.randint(0, 2 ** 32)
         np.random.seed(seed)
@@ -144,14 +147,16 @@ class ContentSimilarLoader(Dataset):
 
 class NormalLoader(Dataset):
     # This loaded is used at test time #
-    def __init__(self, path_a, transform):
+    def __init__(self, path_a, transform, input_res=270, output_res=128):
         self.transform = transform
         self.path_list_a = sorted(glob.glob(f'{path_a}/*.*'))
+        self.input_res = input_res
+        self.output_res = output_res
 
     def transform_set(self, image_a):
         data_transforms = transforms.Compose([
-            transforms.CenterCrop(260),
-            transforms.Resize(128)])
+            transforms.CenterCrop(self.input_res*.95),
+            transforms.Resize(self.output_res)])
 
         image_a = data_transforms(image_a)
         return image_a
@@ -168,14 +173,14 @@ class NormalLoader(Dataset):
         return len(self.path_list_a)
 
 
-def data_load(path_a, path_b, transform, batch_size, shuffle=False, cache=False, cache_file=False, close=30):
+def data_load(path_a, path_b, transform, batch_size, shuffle=False, cache=False, cache_file=False, close=30, input_res=270, output_res=128):
     # Wrapper for content similar loader #
-    dataset = ContentSimilarLoader(path_a, path_b, transform, cache=cache, cache_file=cache_file, close=close)
+    dataset = ContentSimilarLoader(path_a, path_b, transform, cache=cache, cache_file=cache_file, close=close, input_res = input_res, output_res =output_res)
     datalen = dataset.__len__()
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8, shuffle=shuffle), datalen
 
 
-def data_load_preview(path_a, transform, batch_size, shuffle=False):
+def data_load_preview(path_a, transform, batch_size, shuffle=False, input_res=270, output_res=128):
     # Wrapper for nornal loader #
-    dataset = NormalLoader(path_a, transform)
+    dataset = NormalLoader(path_a, transform, input_res = input_res, output_res=output_res)
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8, shuffle=shuffle)

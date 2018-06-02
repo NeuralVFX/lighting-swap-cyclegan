@@ -29,11 +29,13 @@ def show_test(g, g_a, params, save=False):
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=(.5, .5, .5), std=(.5, .5, .5))])
     ids_a = params['ids_a']
     ids_b = params['ids_b']
+    input_res = params["img_input_size"]
+    output_res = params["img_output_size"]
 
     test_loader_a = load.data_load_preview(f'data/{params["dataset"]}/{params["test_folder"]}/{params["A"]}', transform,
-                                           1, shuffle=False)
+                                           1, shuffle=False, input_res=input_res, output_res = output_res)
     test_loader_b = load.data_load_preview(f'data/{params["dataset"]}/{params["test_folder"]}/{params["B"]}', transform,
-                                           1, shuffle=False)
+                                           1, shuffle=False, input_res=input_res, output_res = output_res)
 
     # show and save#
     g.eval()
