@@ -152,7 +152,6 @@ class CycleGan:
         self.train_hist_dict = state['train_hist']
 
     def save_state(self, filepath):
-        print(f'Saving State at Iter:{self.current_iter}')
         out_model_dict = {}
         out_opt_dict = {}
         for i in self.model_dict.keys():
@@ -166,6 +165,7 @@ class CycleGan:
                        'optimizers': out_opt_dict,
                        'train_hist': self.train_hist_dict}
         torch.save(model_state, filepath)
+        return f'Saving State at Iter:{self.current_iter}'
 
     def lr_lookup(self):
         lr_mult = self.iter_stack[self.current_iter]
@@ -180,7 +180,7 @@ class CycleGan:
         for a in range(epochs):
             iter_stack += [math.cos((x / mult_iter) * 3.14) * .5 + .5 for x in (range(int(mult_iter)))]
             mult_iter *= mult
-            save_index.append(len(iter_stack) )
+            save_index.append(len(iter_stack) - 1)
 
         self.iter_stack = iter_stack
         self.save_index = save_index
@@ -311,7 +311,8 @@ class CycleGan:
                 [self.loss_epoch_dict[loss].append(self.loss_batch_dict[loss].data[0]) for loss in self.losses]
 
                 if save:
-                    self.save_state(f'output/{params["save_root"]}_{self.current_epoch}.json')
+                    save_str = self.save_state(f'output/{params["save_root"]}_{self.current_epoch}.json')
+                    tqdm.write(save_str)
                     self.current_epoch += 1
 
                 self.current_iter += 1
