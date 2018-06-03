@@ -142,7 +142,7 @@ class CycleGan:
 
     def load_state(self, filepath):
         state = torch.load(filepath)
-        print (state)
+        print (state['iter'],state['epoch'],state['cycle'])
         self.current_iter = state['iter'] + 1
         self.current_epoch = state['epoch'] + 1
         self.current_epoch = state['cycle'] + 1
