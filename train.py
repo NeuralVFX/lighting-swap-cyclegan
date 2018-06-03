@@ -38,7 +38,7 @@ params = vars(parser.parse_args())
 
 if __name__ == '__main__':
     print (params)
-    if 'load_state' in params.keys():
+    if params['load_state']:
         print (params['load_state'])
     else:
         print ('Starting From Scratch')
