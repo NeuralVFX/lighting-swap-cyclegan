@@ -32,8 +32,15 @@ parser.add_argument('--disc_layers', nargs='?', default=3, type=int)
 parser.add_argument('--ids_a', type=int, nargs='+', default=[10, 20])
 parser.add_argument('--ids_b', type=int, nargs='+', default=[10, 20])
 parser.add_argument('--save_root', nargs='?', default='wat_mai_amataros_train', type=str)
+parser.add_argument('--load_state', nargs='?', type=str)
+
 params = vars(parser.parse_args())
 
 if __name__ == '__main__':
-    lgtSwap = CycleGan(params)
-    lgtSwap.train()
+    print (params)
+    if 'load_state' in params.keys():
+        print (params['load_state'])
+    else:
+        print ('Starting From Scratch')
+    #lgtSwap = CycleGan(params)
+    #lgtSwap.train()
