@@ -145,7 +145,7 @@ class CycleGan:
         print (state['iter'],state['epoch'],state['cycle'])
         self.current_iter = state['iter'] + 1
         self.current_epoch = state['epoch'] + 1
-        self.current_epoch = state['cycle'] + 1
+        self.current_cycle = state['cycle'] + 1
         for i in self.model_dict.keys():
             self.model_dict[i].load_state_dict(state['models'][i])
         for i in self.opt_dict.keys():
