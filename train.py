@@ -36,11 +36,11 @@ parser.add_argument('--load_state', nargs='?', type=str)
 
 params = vars(parser.parse_args())
 
+# if load_state arg is not used, then train model from scratch#
 if __name__ == '__main__':
-    print (params)
+    lgtSwap = CycleGan(params)
     if params['load_state']:
-        print (params['load_state'])
+        lgtSwap.load_state(params['load_state'])
     else:
         print ('Starting From Scratch')
-    #lgtSwap = CycleGan(params)
-    #lgtSwap.train()
+    lgtSwap.train()
