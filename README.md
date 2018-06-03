@@ -1,5 +1,5 @@
 # Lighting-Swap-Cyclegan
-This network is based on CycleGan, which a couple small changes to make it possible to swap lighting between sets of photos.
+This network is based on CycleGan, whith a couple small changes to make it possible to swap lighting between sets of photos. This is the same netowrk from my blog post: http://neuralvfx.com/lighting/lighting-swap-cyclegan/
 
 My datasets were created by photographing the same site at two different times of day. The Wat Mai Amataros Dataset can be downloaded here: http://neuralvfx.com/datasets/light_swap/wat_mai_amataros.rar
 
