@@ -194,7 +194,7 @@ class CycleGan:
 
     def display_history(self):
         fig = plt.figure()
-        for key in self.train_hist_dict.keys():
+        for key in self.losses:
             x = range(len(self.train_hist_dict[key]))
             if len(x) > 0:
                 plt.plot(x, self.train_hist_dict[key], label=key)
