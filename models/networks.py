@@ -1,4 +1,4 @@
-# NETWORK BUILING BLOCKS #
+# NETWORK BUIDLING BLOCKS #
 import torch.nn as nn
 
 

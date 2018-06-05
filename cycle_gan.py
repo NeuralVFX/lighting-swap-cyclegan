@@ -6,7 +6,6 @@ import time
 from tqdm import tqdm
 from torch.utils.data import *
 import matplotlib
-
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from torchvision import transforms
