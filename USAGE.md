@@ -12,11 +12,12 @@ cd lighting-swap-cyclegan
 ```bash
 bash ./data/get_test_dataset.sh
 ```
+- Or try to take some photos on your own!
+
 ## Train The Model
 ```bash
 train.py --dataset wat_mai_amaratos -- train_epoch 3 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
 ```
-
 
 ## Continue Training Existing Saved State
 ```bash
@@ -88,3 +89,5 @@ Test Dir:
 - The content similarity is stored as a cache, and then the `similar_distance` is used to randomly select similar images between the two sets
 
 - The features of the discriminator are used in an additional loss function, this penalizes the difference in mean and standard deviation between real and fake images (of similar content)
+
+- I notice that on occasion, training gets off to a bad start and just learns to invert the image. It's good to check the first couple epochs output images to ensure that you don't waste days training an image inverter!
