@@ -3,6 +3,11 @@ This network is based on CycleGan(https://arxiv.org/pdf/1703.10593.pdf), with a 
 
 My datasets were created by photographing the same site at two different times of day. The "Wat Mai Amataros" dataset can be downloaded here: http://neuralvfx.com/datasets/light_swap/wat_mai_amataros.rar
 
+# Code usage
+
+Usage instructions found here: [user manual page](USAGE.md).
+
+
 # Example Data Sets
 ## Wat Mai Amataros
 ### Sunny
