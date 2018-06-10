@@ -44,6 +44,8 @@ Test Dir:
 
 `data/wat_mai_amataros/test/cloudy/`
 
+## Output Folder Structure
+
 - `weights`, `test images`, `loss graph` and `learning rate graph`, are all output to this directory: 
 
 `output/<save_root>_*.*`
