@@ -24,30 +24,6 @@ train.py --dataset wat_mai_amaratos -- train_epoch 3 --similar_distance 10  --sa
 train.py --dataset wat_mai_amaratos --load_state output/wat_mai_amataros_tain_3.json --train_epoch 8 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
 ```
 
-## Data Folder Structure
-
-- This is the folder layout that the data is expected to be in:
-
-`data/<data set>/<set type>/<variant>/`
-
-- For example if you are swapping `sunny` to `cloudy` on the `wat_mai_amataros` training set:
-
-Train Dir:
-
-`data/wat_mai_amataros/train/sunny/`
-
-`data/wat_mai_amataros/train/cloudy/`
-
-Test Dir:
-
-`data/wat_mai_amataros/test/sunny/`
-
-`data/wat_mai_amataros/test/cloudy/`
-
-- `weights`, `test images`, `loss graph` and `learning rate graph`, are all output to this directory: 
-
-`output/<save_root>_*.*`
-
 ## Command Line Arguments
 
 ```
@@ -79,6 +55,39 @@ Test Dir:
 --save_root, default='wat_mai_amataros_train', type=str   # Prefix for files created by the model under the /output directory
 --load_state, type=str                                    # Optional: filename of state to load and resume training from
 ```
+
+## Data Folder Structure
+
+- This is the folder layout that the data is expected to be in:
+
+`data/<data set>/<set type>/<variant>/`
+
+- For example if you are swapping `sunny` to `cloudy` on the `wat_mai_amataros` training set:
+
+Train Dir:
+
+`data/wat_mai_amataros/train/sunny/`
+
+`data/wat_mai_amataros/train/cloudy/`
+
+Test Dir:
+
+`data/wat_mai_amataros/test/sunny/`
+
+`data/wat_mai_amataros/test/cloudy/`
+
+## Output Folder Structure
+
+- `weights`, `test images`, `loss graph` and `learning rate graph`, are all output to this directory: `output/<save_root>_*.*`
+
+- Learning Rate Graph Example: `output/wat_mai_amataros_train_learning_rate_schedule.jpg`
+![](output/wat_mai_amataros_train_learning_rate_schedule.jpg)
+
+- Loss Graph Example: `output/wat_mai_amataros_train_loss.jpg`
+![](output/wat_mai_amataros_train_loss.jpg)
+
+- Test Image Example (output every loop through dataset): `output/wat_mai_amataros_train_255.jpg`
+![](output/wat_mai_amataros_train_255.jpg)
 
 ## Other Notes
 
