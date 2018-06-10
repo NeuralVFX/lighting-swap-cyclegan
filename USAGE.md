@@ -16,7 +16,7 @@ bash ./data/get_test_dataset.sh
 
 ## Train The Model
 ```bash
-train.py --dataset wat_mai_amaratos -- train_epoch 3 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
+train.py --dataset wat_mai_amataros -- train_epoch 3 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
 ```
 
 ## Continue Training Existing Saved State
