@@ -78,9 +78,7 @@ Test Dir:
 
 ## Output Folder Structure
 
-- `weights`, `test images`, `loss graph` and `learning rate graph`, are all output to this directory: 
-
-`output/<save_root>_*.*`
+- `weights`, `test images`, `loss graph` and `learning rate graph`, are all output to this directory: `output/<save_root>_*.*`
 
 - Learning Rate Graph Example: `output/wat_mai_amataros_train_learning_rate_schedule.jpg`
 ![](output/wat_mai_amataros_train_learning_rate_schedule.jpg)
@@ -88,6 +86,8 @@ Test Dir:
 - Loss Graph Example: `output/wat_mai_amataros_train_loss.jpg`
 ![](output/wat_mai_amataros_train_loss.jpg)
 
+- Test Image Example (output every loop through dataset): `output/wat_mai_amataros_train_255.jpg`
+![](output/wat_mai_amataros_train_255.jpg)
 
 ## Other Notes
 
