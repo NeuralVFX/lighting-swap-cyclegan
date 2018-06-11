@@ -10,7 +10,7 @@ cd lighting-swap-cyclegan
 ```
 - Download the dataset (e.g. [Wat Mai Amataros](http://neuralvfx.com/datasets/light_swap/wat_mai_amataros.rar)):
 ```bash
-bash /data/get_test_dataset.sh
+bash data/get_test_dataset.sh
 ```
 - Or try to take some photos on your own!
 
