@@ -22,14 +22,18 @@ Usage instructions found here: [user manual page](USAGE.md).
 
 # Example Results
 ## Wat Mai Amataros
-### Cloudy to Sunny (1: Real Cloudy Image — 2: Generated Sunny Image — 3: Real Sunny Image)
+### Cloudy to Sunny 
+#### (1: Real Cloudy Image — 2: Generated Sunny Image — 3: Real Sunny Image)
 ![](examples/bankok_pred_A5.png)
-### Sunny to Cloudy (1: Real Sunny Image — 2: Generated Cloudy Image — 3: Real Cloudy Image)
+### Sunny to Cloudy
+#### (1: Real Sunny Image — 2: Generated Cloudy Image — 3: Real Cloudy Image)
 ![](examples/bankok_pred_B3.png)
 ## Wat Choum Khong
-### Cloudy to Sunny (1: Real Cloudy Image — 2: Generated Sunny Image — 3: Real Sunny Image)
+### Cloudy to Sunny 
+#### (1: Real Cloudy Image — 2: Generated Sunny Image — 3: Real Sunny Image)
 ![](examples/luang_pred_A12.png)
-### Sunny to Cloudy (1: Real Sunny Image — 2: Generated Cloudy Image — 3: Real Cloudy Image)
+### Sunny to Cloudy 
+#### (1: Real Sunny Image — 2: Generated Cloudy Image — 3: Real Cloudy Image)
 ![](examples/luang_pred_B13.png)
 
 # Video Examples
