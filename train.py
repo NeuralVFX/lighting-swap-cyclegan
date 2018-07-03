@@ -43,5 +43,5 @@ if __name__ == '__main__':
     if params['load_state']:
         lgtSwap.load_state(params['load_state'])
     else:
-        print ('Starting From Scratch')
+        print('Starting From Scratch')
     lgtSwap.train()

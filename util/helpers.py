@@ -45,9 +45,9 @@ def show_test(g, g_a, params, save=False):
     output_res = params["img_output_size"]
 
     test_loader_a = load.data_load_preview(f'data/{params["dataset"]}/{params["test_folder"]}/{params["A"]}', transform,
-                                           1, shuffle=False, input_res=input_res, output_res = output_res)
+                                           1, shuffle=False, input_res=input_res, output_res=output_res)
     test_loader_b = load.data_load_preview(f'data/{params["dataset"]}/{params["test_folder"]}/{params["B"]}', transform,
-                                           1, shuffle=False, input_res=input_res, output_res = output_res)
+                                           1, shuffle=False, input_res=input_res, output_res=output_res)
 
     # show and save
     g.eval()

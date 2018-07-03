@@ -6,6 +6,7 @@ import time
 from tqdm import tqdm
 from torch.utils.data import *
 import matplotlib
+
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from torchvision import transforms
@@ -29,6 +30,7 @@ def mean_std_loss(f_real, f_fake):
         std_losses += std_loss
         mean_losses += mean_loss
     return mean_losses, std_losses
+
 
 ############################################################################
 # Train
@@ -80,21 +82,23 @@ class CycleGan:
             [transforms.ToTensor(), transforms.Normalize(mean=(.5, .5, .5), std=(.5, .5, .5))])
 
         self.train_loader, data_len = load.data_load(f'data/{params["dataset"]}/{params["train_folder"]}/{params["A"]}',
-                f'data/{params["dataset"]}/{params["train_folder"]}/{params["B"]}',
-                transform, params["batch_size"], shuffle=True, cache=True,
-                cache_file=f'{params["dataset"]}_content_cache.pickle',
-                close=params["similar_distance"], input_res=params["img_input_size"] ,
-                output_res=params["img_output_size"])
+                                                     f'data/{params["dataset"]}/{params["train_folder"]}/{params["B"]}',
+                                                     transform, params["batch_size"], shuffle=True, cache=True,
+                                                     cache_file=f'{params["dataset"]}_content_cache.pickle',
+                                                     close=params["similar_distance"],
+                                                     input_res=params["img_input_size"],
+                                                     output_res=params["img_output_size"])
 
-        self.set_lr_sched(params['train_epoch'], math.ceil(float(data_len) / float(params['batch_size'])), params['lr_cycle_mult'])
+        self.set_lr_sched(params['train_epoch'], math.ceil(float(data_len) / float(params['batch_size'])),
+                          params['lr_cycle_mult'])
 
-        self.model_dict["G_A"] = n.Generator(layers=params["gen_layers"], max_filt=params["gen_filters"],
+        self.model_dict["G_A"] = n.Generator(layers=params["gen_layers"], filts=params["gen_filters"],
                                              channels=params["in_channels"], res_layers=params["res_blocks"])
-        self.model_dict["G_B"] = n.Generator(layers=params["gen_layers"], max_filt=params["gen_filters"],
+        self.model_dict["G_B"] = n.Generator(layers=params["gen_layers"], filts=params["gen_filters"],
                                              channels=params["in_channels"], res_layers=params["res_blocks"])
-        self.model_dict["D_A"] = n.Discriminator(layers=params["disc_layers"], max_filt=params["disc_filters"],
+        self.model_dict["D_A"] = n.Discriminator(layers=params["disc_layers"], filts=params["disc_filters"],
                                                  channels=params["in_channels"])
-        self.model_dict["D_B"] = n.Discriminator(layers=params["disc_layers"], max_filt=params["disc_filters"],
+        self.model_dict["D_B"] = n.Discriminator(layers=params["disc_layers"], filts=params["disc_filters"],
                                                  channels=params["in_channels"])
 
         for i in self.model_dict.keys():

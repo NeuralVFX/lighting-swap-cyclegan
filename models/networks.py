@@ -4,6 +4,7 @@ import torch.nn as nn
 # Re-usable blocks
 ############################################################################
 
+
 class ConvTrans(nn.Module):
     # One Block to be used as conv and transpose throughout the model
     def __init__(self, ic=4, oc=4, kernel_size=3, block_type='res', padding=1, store_relu=False, stride=2):
@@ -65,22 +66,19 @@ class ResBlock(nn.Module):
 
 class Generator(nn.Module):
     # Generator grown from smallest layer
-    def __init__(self, layers=3, max_filt=1024, channels=3, res_layers=3):
+    def __init__(self, layers=3, filts=1024, kernel_size=3, channels=3, res_layers=3):
         super(Generator, self).__init__()
-        kernel_size = 3
-        filts = max_filt
 
         # residual core
-        operations = [ResBlock(ic=max_filt, oc=max_filt, use_dropout=True) for i in
+        operations = [ResBlock(ic=filts, oc=filts, use_dropout=True) for i in
                       range(res_layers)]
 
         # conv and trans building out from core
         for a in range(layers):
-            next_level_filt = int(filts / 2)
-            down = [ConvTrans(ic=next_level_filt, oc=filts, kernel_size=kernel_size, block_type='down')]
-            up = [ConvTrans(ic=filts, oc=next_level_filt, kernel_size=kernel_size, block_type='up')]
+            down = [ConvTrans(ic=int(filts // 2), oc=filts, kernel_size=kernel_size, block_type='down')]
+            up = [ConvTrans(ic=filts, oc=int(filts // 2), kernel_size=kernel_size, block_type='up')]
             operations = down + operations + up
-            filts = next_level_filt
+            filts = int(filts // 2)
 
         # our input and our output
         inp = [nn.ReflectionPad2d(3),
@@ -98,7 +96,7 @@ class Generator(nn.Module):
 
 class Discriminator(nn.Module):
     # Discriminator Which Returns Features For Custom Loss
-    def __init__(self, channels=3, filts=512, kernel_size = 4, layers=5):
+    def __init__(self, channels=3, filts=512, kernel_size=4, layers=5):
         super(Discriminator, self).__init__()
 
         operations = []
