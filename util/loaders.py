@@ -16,9 +16,12 @@ import torch.nn as nn
 import torch
 from torch.utils.data import *
 
+############################################################################
+#  Loader utilities
+############################################################################
 
 def create_content_model():
-    # Create Resnet and chop it to use for content similarity measurment #
+    # Create Resnet and chop it to use for content similarity measurement
     model = models.resnet34(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False
@@ -52,6 +55,10 @@ def make_content_dict(path_list,input_res = 270):
     del extractor
     return torch.stack(content_list)
 
+
+###########################################################################
+#  Datasets and Loaders
+############################################################################
 
 class ContentSimilarLoader(Dataset):
     # Loader for training, serves images from each dataset which appear similar, creates cache of most similar images #
@@ -184,6 +191,6 @@ def data_load(path_a, path_b, transform, batch_size, shuffle=False, cache=False,
 
 
 def data_load_preview(path_a, transform, batch_size, shuffle=False, input_res=270, output_res=128):
-    # Wrapper for nornal loader #
+    # Wrapper for normal loader #
     dataset = NormalLoader(path_a, transform, input_res = input_res, output_res=output_res)
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8, shuffle=shuffle)

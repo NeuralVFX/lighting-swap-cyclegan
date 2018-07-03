@@ -11,21 +11,33 @@ import matplotlib.pyplot as plt
 from util import loaders as load
 
 
+############################################################################
+# Helper Utilities
+############################################################################
+
+def weights_init_normal(m):
+    # Set initial state of weights
+    classname = m.__class__.__name__
+    if 'ConvTrans' == classname:
+        pass
+    elif 'Conv2d' in classname or 'Linear' in classname or 'ConvTrans' in classname:
+        nn.init.normal(m.weight.data, 0, .02)
+
+
 def mft(tensor):
-    # Return mean float tensor #
+    # Return mean float tensor
     return torch.mean(torch.FloatTensor(tensor))
 
 
 def normalize_img(x, cpu=False):
-    # Reverse Image Normalization #
+    # Reverse Image Normalization
     if cpu:
         x = x.cpu().data
     return (x.numpy().transpose(1, 2, 0) + 1) / 2
 
 
 def show_test(g, g_a, params, save=False):
-    # Use IDs provided by user to index into non-shufled data loader and chech the same images each time#
-
+    # Use IDs provided by user to index into non-shufled data loader and chech the same images each time
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=(.5, .5, .5), std=(.5, .5, .5))])
     ids_a = params['ids_a']
     ids_b = params['ids_b']
@@ -37,7 +49,7 @@ def show_test(g, g_a, params, save=False):
     test_loader_b = load.data_load_preview(f'data/{params["dataset"]}/{params["test_folder"]}/{params["B"]}', transform,
                                            1, shuffle=False, input_res=input_res, output_res = output_res)
 
-    # show and save#
+    # show and save
     g.eval()
     g_a.eval()
     image_grid_len = len(ids_a) + len(ids_b)
@@ -72,8 +84,7 @@ def show_test(g, g_a, params, save=False):
 
 
 class ImagePool:
-    #Use old images during training: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/issues/75 #
-
+    #Use old images during training: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/issues/75
     def __init__(self, pool_size):
         self.pool_size = pool_size
         if self.pool_size > 0:

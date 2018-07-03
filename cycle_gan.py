@@ -19,16 +19,8 @@ from util import loaders as load
 from models import networks as n
 
 
-def weights_init_normal(m):
-    classname = m.__class__.__name__
-    if 'ConvTrans' == classname:
-        pass
-    elif 'Conv2d' in classname or 'Linear' in classname or 'ConvTrans' in classname:
-        nn.init.normal(m.weight.data, 0, .02)
-
-
 def mean_std_loss(f_real, f_fake):
-    # loop through features collected from real and fake discriminators, measure difference in std and mean #
+    # Loop through features collected from real and fake discriminators, measure difference in std and mean
     std_losses = 0
     mean_losses = 0
     for real_feat, fake_feat in zip(f_real, f_fake):
@@ -38,6 +30,9 @@ def mean_std_loss(f_real, f_fake):
         mean_losses += mean_loss
     return mean_losses, std_losses
 
+############################################################################
+# Train
+############################################################################
 
 class CycleGan:
     """
@@ -103,7 +98,7 @@ class CycleGan:
                                                  channels=params["in_channels"])
 
         for i in self.model_dict.keys():
-            self.model_dict[i].apply(weights_init_normal)
+            self.model_dict[i].apply(helper.weights_init_normal)
             self.model_dict[i].cuda()
             self.model_dict[i].train()
 
@@ -140,6 +135,7 @@ class CycleGan:
             self.loss_batch_dict[loss] = []
 
     def load_state(self, filepath):
+        # Load previously saved sate from disk, including models, optimizers and history
         state = torch.load(filepath)
         self.current_iter = state['iter'] + 1
         self.current_epoch = state['epoch'] + 1
@@ -151,6 +147,7 @@ class CycleGan:
         self.train_hist_dict = state['train_hist']
 
     def save_state(self, filepath):
+        # Save current state of all models, optimizers and history to disk
         out_model_dict = {}
         out_opt_dict = {}
         for i in self.model_dict.keys():
@@ -167,12 +164,13 @@ class CycleGan:
         return f'Saving State at Iter:{self.current_iter}'
 
     def lr_lookup(self):
+        # Determine proper learning rate multiplier for this iter
         lr_mult = self.iter_stack[self.current_iter]
         save = self.current_iter in self.save_index
         return lr_mult, save
 
     def set_lr_sched(self, epochs, iters, mult):
-        # hacky implimentation of warm restarts, will replace with pytorch version when its commmited #
+        # Test implementation of warm restarts, makes training wat_mai dataset easier
         mult_iter = iters
         iter_stack = []
         save_index = []
@@ -192,6 +190,7 @@ class CycleGan:
         plt.close(fig)
 
     def display_history(self):
+        # Draw history of losses, called at end of training
         fig = plt.figure()
         for key in self.losses:
             x = range(len(self.train_hist_dict[key]))
@@ -207,19 +206,20 @@ class CycleGan:
         plt.close(fig)
 
     def train(self):
+        # Train following learning rate schedule
         params = self.params
         done = False
-        # training loop #
         while not done:
+            # clear last epochs losses
             for loss in self.losses:
                 self.loss_epoch_dict[loss] = []
 
             epoch_start_time = time.time()
             num_iter = 0
 
+            print(f"Sched Cycle:{self.current_cycle}, Sched Iter:{self.current_iter}, Sched Epoch:{self.current_epoch}")
             [print(f"Learning Rate({opt}): {self.opt_dict[opt].param_groups[0]['lr']}") for opt in
              self.opt_dict.keys()]
-            print(f"Sched Cycle:{self.current_cycle}, Sched Iter:{self.current_iter}, Sched Epoch:{self.current_epoch}")
 
             for (real_a, real_b) in tqdm(self.train_loader):
 
@@ -236,43 +236,43 @@ class CycleGan:
 
                 real_a, real_b = Variable(real_a.cuda()), Variable(real_b.cuda())
 
-                # traing generator#
+                # traing generator
                 self.opt_dict["G"].zero_grad()
 
-                # generate fake b and discriminate#
+                # generate fake b and discriminate
                 fake_b = self.model_dict["G_A"](real_a)
                 d_a_result, d_a_fake_feats = self.model_dict["D_A"](fake_b)
                 self.loss_batch_dict['G_A_loss'] = self.BCE_loss(d_a_result,
                                                                  Variable(torch.ones(d_a_result.size()).cuda()))
 
-                # reconstruct a #
+                # reconstruct a
                 rec_a = self.model_dict["G_B"](fake_b)
                 self.loss_batch_dict['Cycle_A_loss'] = self.L1_loss(rec_a, real_a) * params['cycle_loss_A']
 
-                # generate fake a and discriminate#
+                # generate fake a and discriminate
                 fake_a = self.model_dict["G_B"](real_b)
                 d_b_result, d_b_fake_feats = self.model_dict["D_B"](fake_a)
                 self.loss_batch_dict['G_B_loss'] = self.BCE_loss(d_b_result,
                                                                  Variable(torch.ones(d_b_result.size()).cuda()))
-                # reconstruct b #
+                # reconstruct b
                 rec_b = self.model_dict["G_A"](fake_a)
                 self.loss_batch_dict['Cycle_B_loss'] = self.L1_loss(rec_b, real_b) * params['cycle_loss_B']
 
                 self.opt_dict["D_A"].zero_grad()
                 self.opt_dict["D_B"].zero_grad()
 
-                # discriminate real samples #
+                # discriminate real samples
                 d_a_real, d_a_real_feats = self.model_dict["D_A"](real_b)
                 d_b_real, d_b_real_feats = self.model_dict["D_B"](real_a)
 
                 d_a_mean_loss, d_a_std_loss = mean_std_loss(d_a_real_feats, d_a_fake_feats)
                 d_b_mean_loss, d_b_std_loss = mean_std_loss(d_b_real_feats, d_b_fake_feats)
 
-                # calculate feature loss #
+                # calculate feature loss
                 self.loss_batch_dict['D_A_feat_loss'] = d_a_std_loss + d_a_mean_loss
                 self.loss_batch_dict['D_B_feat_loss'] = d_b_std_loss + d_b_mean_loss
 
-                # addup generator a and b loss and step ##
+                # addup generator a and b loss and step
                 g_a_loss_total = self.loss_batch_dict['G_A_loss'] * .5 + self.loss_batch_dict['D_B_feat_loss'] * .5
                 g_b_loss_total = self.loss_batch_dict['G_B_loss'] * .5 + self.loss_batch_dict['D_A_feat_loss'] * .5
 
@@ -281,31 +281,31 @@ class CycleGan:
                 g_loss.backward(retain_graph=True)
                 self.opt_dict["G"].step()
 
-                # train discriminator a #
+                # train discriminator a
                 d_a_real_loss = self.BCE_loss(d_a_real, Variable(torch.ones(d_a_real.size()).cuda()))
 
                 fake_b = self.fakeB_pool.query(fake_b)
                 d_a_fake, d_a_fake_feats = self.model_dict["D_A"](fake_b)
                 d_a_fake_loss = self.BCE_loss(d_a_fake, Variable(torch.zeros(d_a_fake.size()).cuda()))
 
-                # add up disc a loss and step #
+                # add up disc a loss and step
                 self.loss_batch_dict['D_A_loss'] = (d_a_real_loss + d_a_fake_loss) * .5
                 self.loss_batch_dict['D_A_loss'].backward()
                 self.opt_dict["D_A"].step()
 
-                # train discriminator b #
+                # train discriminator b
                 d_b_real_loss = self.BCE_loss(d_b_real, Variable(torch.ones(d_b_real.size()).cuda()))
 
                 fake_a = self.fakeA_pool.query(fake_a)
                 d_b_fake, d_b_fake_feats = self.model_dict["D_B"](fake_a)
                 d_b_fake_loss = self.BCE_loss(d_b_fake, Variable(torch.zeros(d_b_fake.size()).cuda()))
 
-                # add up disc b  loss and step #
+                # add up disc b  loss and step
                 self.loss_batch_dict['D_B_loss'] = (d_b_real_loss + d_b_fake_loss) * .5
                 self.loss_batch_dict['D_B_loss'].backward()
                 self.opt_dict["D_B"].step()
 
-                # append all losses in loss dict #
+                # append all losses in loss dict
                 [self.train_hist_dict[loss].append(self.loss_batch_dict[loss].data[0]) for loss in self.losses]
                 [self.loss_epoch_dict[loss].append(self.loss_batch_dict[loss].data[0]) for loss in self.losses]
 
