@@ -7,6 +7,7 @@ from torchvision import transforms
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+import torch.nn as nn
 
 from util import loaders as load
 
