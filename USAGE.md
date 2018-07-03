@@ -10,18 +10,18 @@ cd lighting-swap-cyclegan
 ```
 - Download the dataset (e.g. [Wat Mai Amataros](http://neuralvfx.com/datasets/light_swap/wat_mai_amataros.rar)):
 ```bash
-bash ./data/get_test_dataset.sh
+bash data/get_test_dataset.sh
 ```
 - Or try to take some photos on your own!
 
 ## Train The Model
 ```bash
-train.py --dataset wat_mai_amaratos -- train_epoch 3 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
+train.py --dataset wat_mai_amataros -- train_epoch 3 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
 ```
 
 ## Continue Training Existing Saved State
 ```bash
-train.py --dataset wat_mai_amaratos --load_state output/wat_mai_amataros_tain_3.json --train_epoch 8 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
+train.py --dataset wat_mai_amataros --load_state output/wat_mai_amataros_tain_3.json --train_epoch 8 --similar_distance 10  --save_root wat_mai_amataros_tain --A morning --B cloudy
 ```
 
 ## Command Line Arguments
