@@ -1,5 +1,6 @@
 
 ## Getting Started
+- Check your python version, this is built on `python 3.6`
 - Install `pytorch 0.3.1` and dependencies from https://pytorch.org/
 - Install packages `tqdm`, `PIL`, `matplotlib`, `unrar`
 
