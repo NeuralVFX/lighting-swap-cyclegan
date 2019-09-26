@@ -1,3 +1,4 @@
+![](examples/bk_video_B3.gif)
 # Lighting-Swap-Cyclegan
 This network is based on CycleGan(https://arxiv.org/pdf/1703.10593.pdf), with a couple small modifications to make it easy to swap lighting between sets of photos. This is the same network from my blog post: http://neuralvfx.com/lighting/lighting-swap-cyclegan/
 
